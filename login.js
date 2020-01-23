@@ -13,16 +13,19 @@ server.listen(3000, function(){
 
 const connections = [];
 
+
 app.get('/chat',function(request,response){
 	response.sendFile(__dirname+'/chat.html');
 });
 
 io.sockets.on('connection', function(socket){
+
 	connections.push(socket);
-	console.log(' %s sockets is connected', connections.length);
+	console.log(' %s jest polaczonych', connections.length	);
+
 	socket.on('disconnect', function(){
 		connections.splice(connections.indexOf(socket), 1);
-		console.log('user disconnected');
+		console.log(' %s jest polaczonych', connections.length);
 	});
 	socket.on('chat message', function(msg){
 		io.emit('chat message', msg.message);
@@ -63,12 +66,12 @@ app.post('/auth', function(request, response) {
 				request.session.username = username;
 				response.redirect('/home');
 			} else {
-				response.send('Incorrect Username and/or Password!');
+				response.send('Nieprawidłowa nazwa użytkownika/hasło!');
 			}			
 			response.end();
 		});
 	} else {
-		response.send('Please enter Username and Password!');
+		response.send('Podaj nazwę użytkownika/hasło!');
 		response.end();
 	}
 });
@@ -77,7 +80,7 @@ app.get('/home', function(request, response) {
 	if (request.session.loggedin) {
 		response.redirect('/chat');
 	} else {
-		response.send('Please login to view this page!');
+		response.send('Zaloguj się aby zobaczyć tą stronę!');
 	}
 	response.end();
 });
